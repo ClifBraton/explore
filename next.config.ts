@@ -2,7 +2,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   webpack: (config, { isServer }) => {
-    // Fallback for node modules in browser
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
@@ -13,14 +12,7 @@ const nextConfig: NextConfig = {
         worker_threads: false,
       };
     }
-    
-    // Ignore pino/thread-stream test files
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      "thread-stream/test": false,
-      "pino/test": false,
-    };
-    
+    config.externals.push("pino-pretty", "lokijs", "encoding");
     return config;
   },
 };
