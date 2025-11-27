@@ -217,7 +217,9 @@ function SecretCard({
       {/* Title + Permission Status */}
       <div className="flex items-start justify-between mb-3">
         <h4 className="text-white font-medium">{secret.title || "Untitled"}</h4>
-        {userAddress?.toLowerCase() === secret.creator.toLowerCase() ? (
+        {!isConnected ? (
+          <span className="text-xs px-2 py-0.5 rounded bg-zinc-500/20 text-zinc-400">Connect wallet to check access</span>
+        ) : userAddress?.toLowerCase() === secret.creator.toLowerCase() ? (
           <span className="text-xs px-2 py-0.5 rounded bg-violet-500/20 text-violet-400">Creator has automatic decrypt access</span>
         ) : hasAccess ? (
           <span className="text-xs px-2 py-0.5 rounded bg-green-500/20 text-green-400">Accessible</span>
@@ -243,10 +245,10 @@ function SecretCard({
               </div>
               <button
                 onClick={handleDecrypt}
-                disabled={isDecrypting || !instance}
+                disabled={isDecrypting || !instance || !isConnected}
                 className="text-xs px-3 py-1 bg-violet-600 hover:bg-violet-700 disabled:bg-zinc-700 text-white rounded transition-colors"
               >
-                {isDecrypting ? (decryptStep || "Processing...") : "Decrypt"}
+                {!isConnected ? "Connect Wallet" : isDecrypting ? (decryptStep || "Processing...") : "Decrypt"}
               </button>
             </div>
           </div>
