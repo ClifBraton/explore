@@ -2,11 +2,13 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { CONTRACTS, GateType } from "@/lib/contract";
 import { useFhevm } from "@/components/providers/fhevm-provider";
 
 export function CreateSecretPanel() {
   const { address, isConnected } = useAccount();
+  const { openConnectModal } = useConnectModal();
   const { instance, instanceLoading } = useFhevm();
   const { writeContract, data: hash, isPending, reset } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash });
@@ -211,8 +213,8 @@ export function CreateSecretPanel() {
 
         {/* Submit Button */}
         <button
-          onClick={handleSubmit}
-          disabled={!isConnected || isLoading || !title || !secretText || !instance}
+          onClick={!isConnected ? openConnectModal : handleSubmit}
+          disabled={isConnected && (isLoading || !title || !secretText || !instance)}
           className="w-full py-3 bg-violet-600 hover:bg-violet-700 disabled:bg-zinc-700 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
         >
           {!isConnected ? "Connect Wallet" : isEncrypting ? "Encrypting..." : isPending ? "Confirming..." : isConfirming ? "On-chain confirming..." : isSuccess ? "Published!" : instanceLoading ? "Loading SDK..." : "Encrypt & Publish"}

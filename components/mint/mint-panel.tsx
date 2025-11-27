@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { CONTRACTS } from "@/lib/contract";
 import { useNotification } from "@/components/providers/notification-provider";
 
@@ -77,6 +78,7 @@ export function MintPanel() {
 }
 
 function MintToken({ isConnected }: { isConnected: boolean }) {
+  const { openConnectModal } = useConnectModal();
   const { writeContract, data: hash, isPending, reset } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash });
   const { success: showSuccess } = useNotification();
@@ -117,8 +119,8 @@ function MintToken({ isConnected }: { isConnected: boolean }) {
       </div>
 
       <button
-        onClick={handleMint}
-        disabled={!isConnected || isPending || isConfirming}
+        onClick={!isConnected ? openConnectModal : handleMint}
+        disabled={isConnected && (isPending || isConfirming)}
         className="w-full py-3 bg-violet-600 hover:bg-violet-700 disabled:bg-zinc-700 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
       >
         {!isConnected ? "Connect Wallet" : isPending ? "Confirming..." : isConfirming ? "On-chain confirming..." : isSuccess ? "Mint Success!" : "Mint Token"}
@@ -128,6 +130,7 @@ function MintToken({ isConnected }: { isConnected: boolean }) {
 }
 
 function MintNFT({ isConnected }: { isConnected: boolean }) {
+  const { openConnectModal } = useConnectModal();
   const { writeContract, data: hash, isPending, reset } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash });
   const { success: showSuccess } = useNotification();
@@ -168,8 +171,8 @@ function MintNFT({ isConnected }: { isConnected: boolean }) {
       </div>
 
       <button
-        onClick={handleMint}
-        disabled={!isConnected || isPending || isConfirming}
+        onClick={!isConnected ? openConnectModal : handleMint}
+        disabled={isConnected && (isPending || isConfirming)}
         className="w-full py-3 bg-violet-600 hover:bg-violet-700 disabled:bg-zinc-700 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
       >
         {!isConnected ? "Connect Wallet" : isPending ? "Confirming..." : isConfirming ? "On-chain confirming..." : isSuccess ? "Mint Success!" : "Mint NFT"}

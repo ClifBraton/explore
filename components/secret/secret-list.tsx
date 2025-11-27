@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useAccount, useReadContract, useWalletClient, useWriteContract } from "wagmi";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { CONTRACTS, GateType, type SecretPublicInfo } from "@/lib/contract";
 import { useFhevm } from "@/components/providers/fhevm-provider";
 import { useNotification } from "@/components/providers/notification-provider";
@@ -61,6 +62,7 @@ function SecretCard({
   userAddress?: `0x${string}`;
   isConnected: boolean;
 }) {
+  const { openConnectModal } = useConnectModal();
   const { instance } = useFhevm();
   const { data: walletClient } = useWalletClient();
   const { writeContractAsync } = useWriteContract();
@@ -244,8 +246,8 @@ function SecretCard({
                 <span className="text-xs">Content encrypted</span>
               </div>
               <button
-                onClick={handleDecrypt}
-                disabled={isDecrypting || !instance || !isConnected}
+                onClick={!isConnected ? openConnectModal : handleDecrypt}
+                disabled={isConnected && (isDecrypting || !instance)}
                 className="text-xs px-3 py-1 bg-violet-600 hover:bg-violet-700 disabled:bg-zinc-700 text-white rounded transition-colors"
               >
                 {!isConnected ? "Connect Wallet" : isDecrypting ? (decryptStep || "Processing...") : "Decrypt"}
