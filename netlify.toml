@@ -1,6 +1,9 @@
 [build]
-  command = "npm run build"
+  command = "NEXT_TELEMETRY_DISABLED=1 npm run build -- --no-turbo"
   publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
