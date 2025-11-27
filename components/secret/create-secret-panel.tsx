@@ -37,13 +37,6 @@ export function CreateSecretPanel() {
     }
   }, [isSuccess, reset]);
 
-  if (!isConnected) {
-    return (
-      <div className="bg-zinc-900/70 border border-zinc-800/50 backdrop-blur-xl shadow-xl rounded-xl p-6 text-center">
-        <p className="text-zinc-400">Please connect wallet</p>
-      </div>
-    );
-  }
 
   // Convert text to BigInt (max 31 bytes, compatible with euint256)
   const textToBigInt = (text: string): bigint => {
@@ -219,10 +212,10 @@ export function CreateSecretPanel() {
         {/* Submit Button */}
         <button
           onClick={handleSubmit}
-          disabled={isLoading || !title || !secretText || !instance}
+          disabled={!isConnected || isLoading || !title || !secretText || !instance}
           className="w-full py-3 bg-violet-600 hover:bg-violet-700 disabled:bg-zinc-700 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
         >
-          {isEncrypting ? "Encrypting..." : isPending ? "Confirming..." : isConfirming ? "On-chain confirming..." : isSuccess ? "Published!" : instanceLoading ? "Loading SDK..." : "Encrypt & Publish"}
+          {!isConnected ? "Connect Wallet" : isEncrypting ? "Encrypting..." : isPending ? "Confirming..." : isConfirming ? "On-chain confirming..." : isSuccess ? "Published!" : instanceLoading ? "Loading SDK..." : "Encrypt & Publish"}
         </button>
 
         {isSuccess && (

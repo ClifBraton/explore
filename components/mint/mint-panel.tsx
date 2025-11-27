@@ -42,14 +42,6 @@ export function MintPanel() {
   const { isConnected } = useAccount();
   const [activeTab, setActiveTab] = useState<"token" | "nft">("token");
 
-  if (!isConnected) {
-    return (
-      <div className="bg-zinc-900/70 border border-zinc-800/50 backdrop-blur-xl shadow-xl rounded-xl p-6 text-center">
-        <p className="text-zinc-400">Please connect wallet</p>
-      </div>
-    );
-  }
-
   return (
     <div className="bg-zinc-900/70 border border-zinc-800/50 backdrop-blur-xl shadow-xl rounded-xl overflow-hidden">
       {/* Tabs */}
@@ -78,13 +70,13 @@ export function MintPanel() {
 
       {/* Content */}
       <div className="p-6">
-        {activeTab === "token" ? <MintToken /> : <MintNFT />}
+        {activeTab === "token" ? <MintToken isConnected={isConnected} /> : <MintNFT isConnected={isConnected} />}
       </div>
     </div>
   );
 }
 
-function MintToken() {
+function MintToken({ isConnected }: { isConnected: boolean }) {
   const { writeContract, data: hash, isPending, reset } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash });
   const { success: showSuccess } = useNotification();
@@ -126,16 +118,16 @@ function MintToken() {
 
       <button
         onClick={handleMint}
-        disabled={isPending || isConfirming}
+        disabled={!isConnected || isPending || isConfirming}
         className="w-full py-3 bg-violet-600 hover:bg-violet-700 disabled:bg-zinc-700 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
       >
-        {isPending ? "Confirming..." : isConfirming ? "On-chain confirming..." : isSuccess ? "Mint Success!" : "Mint Token"}
+        {!isConnected ? "Connect Wallet" : isPending ? "Confirming..." : isConfirming ? "On-chain confirming..." : isSuccess ? "Mint Success!" : "Mint Token"}
       </button>
     </div>
   );
 }
 
-function MintNFT() {
+function MintNFT({ isConnected }: { isConnected: boolean }) {
   const { writeContract, data: hash, isPending, reset } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash });
   const { success: showSuccess } = useNotification();
@@ -177,10 +169,10 @@ function MintNFT() {
 
       <button
         onClick={handleMint}
-        disabled={isPending || isConfirming}
+        disabled={!isConnected || isPending || isConfirming}
         className="w-full py-3 bg-violet-600 hover:bg-violet-700 disabled:bg-zinc-700 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
       >
-        {isPending ? "Confirming..." : isConfirming ? "On-chain confirming..." : isSuccess ? "Mint Success!" : "Mint NFT"}
+        {!isConnected ? "Connect Wallet" : isPending ? "Confirming..." : isConfirming ? "On-chain confirming..." : isSuccess ? "Mint Success!" : "Mint NFT"}
       </button>
     </div>
   );
